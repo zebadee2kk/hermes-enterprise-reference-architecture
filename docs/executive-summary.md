@@ -1,78 +1,67 @@
 # Executive summary
 
-## What the platform is
+## Problem statement
 
-The Hermes Enterprise Reference Architecture describes a governed, observable agentic AI platform designed for small businesses, managed-service providers, and enterprise pilots. It is not a single product. It is a reusable pattern for deploying AI agents that can read, reason, draft, and act — while keeping humans in control of every mutation.
+Organisations are adopting AI agents faster than they can govern them. A single prompt injection can trigger destructive actions. Costs can spiral without budget controls. Client data can leak into logs, memory, or external APIs. Auditors and regulators are left with no evidence trail.
 
-## What business problems it solves
+The result is a common pattern: teams experiment with agentic AI, hit a governance or safety wall, and then spend months rebuilding on a stronger foundation. This reference architecture exists to shorten that cycle.
 
-Organisations are adopting AI agents faster than they can govern them. This architecture addresses three common failures:
+## Solution architecture
 
-1. **Uncontrolled autonomy** — agents that can change production systems, send messages, or delete data without oversight.
-2. **Invisible decisions** — no trace of why an agent called a tool, chose a model, or wrote to memory.
-3. **Unrepeatable deployments** — every new client or project starts from scratch with no shared pattern.
+The Hermes Enterprise Reference Architecture describes a governed, observable agentic AI platform built around two core layers:
 
-This reference architecture provides a repeatable, governable starting point.
+**Hermes Agent** — the operator-facing control surface and orchestration layer. It provides chat and task interaction, deterministic workflow routing, approval prompts, and full run history. Every model call, tool call, and memory write is traced by default.
 
-## Why governance matters
+**WorkOS control plane** — the identity, access, and policy backbone. It enforces who can do what, when, and under which approval model. It integrates with enterprise identity providers, manages role-based access, and ensures every mutating action has an owner, a reason, and an audit record.
 
-Agentic AI systems can act at machine speed across many tools. Without governance:
+Together, these layers let teams deploy agents that can read, reason, draft, and act — while keeping humans in control of every mutation.
 
-- a single prompt injection can trigger destructive actions;
-- cost can spiral without budget controls;
-- client data can leak into logs, memory, or external APIs;
-- auditors and regulators have no evidence trail.
+## Deployment models
 
-The governance model here is **deny-by-default**: nothing is allowed until it has a named owner, a documented purpose, an approval requirement, and an audit trail.
+The architecture supports four primary deployment patterns, selected to match the client's infrastructure, risk appetite, and operational capacity.
 
-## Typical deployment options
+| Model | Typical environment | Best for |
+|---|---|---|
+| **Hyper-V appliance** | Windows-hosted virtual machine on client premises | SMB clients already running Hyper-V |
+| **VMware appliance** | vSphere/ESXi virtual machine | Regulated environments with existing VMware estates |
+| **Proxmox appliance** | Open-source hypervisor on dedicated hardware | Cost-sensitive or open-source-first deployments |
+| **Bare-metal appliance** | Dedicated mini-PC or server at client site | Maximum performance, full hardware control, air-gapped options |
 
-| Pattern | Best starting point |
-|---|---|
-| Local lab / workstation | Personal experimentation and prompt development |
-| Client appliance VM | SMB or MSP delivery with local system access |
-| Cloud / VPS hosted | Website, content, and external integrations |
-| Enterprise segmented | Regulated environments with formal change control |
-| Managed AI jump-box | MSP support operations and remote assistance |
+All four models share the same software stack and governance model. The choice of hypervisor affects only placement, sizing, and lifecycle management — not the agent behaviour or policy model.
 
-## Example appliance profiles
+## Reference use cases
 
-| Profile | What it does |
-|---|---|
-| Read-only reconnaissance | Analyses systems and produces documentation without changing anything |
-| Content operations | Researches, drafts, and publishes content with approval gates |
-| Support desk co-pilot | Triages tickets, suggests resolutions, drafts replies |
-| Finance/admin automation | Extracts data, flags anomalies, prepares reconciliations |
-| Managed AI jump-box | Secure local management point for support operations |
-| Executive reporting | Produces recurring management reports from operational data |
+The architecture is designed to support multiple governed agent profiles from a single platform. Three reference use cases are prioritised for initial deployment.
 
-## What a safe first pilot looks like
+**Security operations** — The agent triages alerts, correlates events, drafts incident summaries, and suggests containment steps. All actions are read-only by default; any remediation requires explicit approval. Every decision is traced for post-incident review.
 
-A responsible first deployment should be:
+**Content operations** — The agent researches, drafts, and prepares content for publication. Human approval gates sit between draft and publish. The agent can also manage scheduled publishing workflows, content audits, and cross-channel consistency checks.
 
-- **Read-only or draft-only** — the agent can analyse and recommend, but cannot change production systems.
-- **Approval-gated** — any mutation requires explicit human approval.
-- **Observable** — every model call, tool call, and memory write is traced.
-- **Time-boxed** — the pilot has a defined review date and success criteria.
+**Support desk co-pilot** — The agent triages incoming tickets, suggests resolutions from knowledge bases, drafts replies, and escalates when confidence is low. It reduces mean time to first response while keeping a qualified human in the loop for every customer-facing action.
 
-## What outcomes to expect
+## ROI and value proposition
 
-Organisations that follow this pattern typically see:
+Organisations that adopt this pattern typically see measurable gains in four areas:
 
-- faster, more consistent AI deployment across teams;
-- clear audit trails for every agent action;
-- reduced risk of uncontrolled autonomous behaviour;
-- a reusable foundation for multiple client or internal use cases;
-- a governance model that satisfies security review and compliance checks.
+- **Faster time to value** — repeatable deployment patterns eliminate the build-from-scratch cycle. A new client or internal use case can be onboarded in days rather than weeks.
+- **Reduced operational risk** — deny-by-default tool access, approval gates, and full audit trails mean fewer incidents caused by uncontrolled agent behaviour.
+- **Lower compliance cost** — traceable decisions and documented approval models satisfy security review and regulatory requirements with less manual evidence gathering.
+- **Reusable platform investment** — the same architecture serves multiple clients, departments, or use cases, turning a one-off experiment into a durable organisational capability.
 
-## What this is not
+The core financial argument is straightforward: a governed platform costs less than a single uncontrolled incident.
 
-This reference architecture is not:
+## Getting started
 
-- a single vendor product;
-- a fully autonomous or unsupervised system;
-- a replacement for upstream documentation from Hermes, LangGraph, n8n, LiteLLM, Mem0, Langfuse, or Promptfoo;
-- intended to expose private infrastructure, client data, or credentials.
+A responsible first deployment follows a simple progression.
+
+1. **Read this summary and the architecture overview** — confirm the pattern fits your environment and risk model.
+2. **Select a deployment model** — Hyper-V, VMware, Proxmox, or bare-metal, depending on your existing infrastructure.
+3. **Start with a read-only pilot** — the agent can analyse, recommend, and draft, but cannot change production systems.
+4. **Enable approval gates** — any mutation requires explicit human approval during the pilot phase.
+5. **Verify observability** — confirm that every model call, tool call, and memory write is traced before expanding scope.
+6. **Expand tool access gradually** — add mutating tools only after the baseline is stable and the approval model is proven.
+
+A pilot that follows this path can typically be operational within one to two weeks, with a clear review date and success criteria defined upfront.
 
 ---
 

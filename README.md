@@ -68,12 +68,13 @@ The architecture describes a managed agentic AI platform with:
 
 ## Recommended reading order
 
-1. [Architecture overview](docs/architecture/overview.md)
-2. [Security and governance model](docs/security-and-governance.md)
-3. [Memory, observability and evaluation](docs/memory-observability-evals.md)
-4. [Deployment patterns](docs/deployment-patterns.md)
-5. [Client appliance profiles](docs/client-appliance-profiles.md)
-6. [Roadmap](docs/roadmap.md)
+1. [Executive summary](docs/executive-summary.md) — one-page overview for directors and prospects
+2. [Architecture overview](docs/architecture/overview.md)
+3. [Security and governance model](docs/security-and-governance.md)
+4. [Memory, observability and evaluation](docs/memory-observability-evals.md)
+5. [Deployment patterns](docs/deployment-patterns.md)
+6. [Client appliance profiles](docs/client-appliance-profiles.md)
+7. [Roadmap](docs/roadmap.md)
 
 ## Non-goals
 
