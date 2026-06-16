@@ -1,0 +1,62 @@
+flowchart TB
+    subgraph INTERNET["🌐 Untrusted Zone — Internet"]
+        WEBHOOK_IN["Incoming Webhooks"]
+        CLOUD_MODELS["Cloud Model APIs"]
+        EXTERNAL_APIs["External / Public APIs"]
+    end
+
+    subgraph DMZ["🟡 DMZ / Access Zone"]
+        WAF["WAF / Reverse Proxy"]
+        TUNNEL["VPN / Tailscale /<br/>Cloudflare Tunnel"]
+        WORKOS_V["WorkOS Control Plane<br/>Identity & Access Management"]
+    end
+
+    subgraph SECURE["🟢 Secure Zone — Agent Platform"]
+        direction TB
+        subgraph APPROVALZONE["Approval & Governance Zone"]
+            H["Hermes Agent Interface"]
+            APPROVAL["Approval Gate Engine"]
+            POLICY["Tool Policy Registry<br/>Allow / Deny / Approval"]
+        end
+        
+        subgraph EXECUTEZONE["Execution Zone"]
+            LG["LangGraph Supervisor"]
+            TP["Tool Proxy /<br/>Governed MCP"]
+            TOOLS["Tool Integrations<br/>GitHub, NetBox,<br/>Email, etc."]
+        end
+    end
+
+    subgraph DATAVAULT["🔒 Data Vault Zone"]
+        direction TB
+        LITELLM_SEC["LiteLLM Gateway"]
+        MEM_SEC["Memory Layer<br/>Mem0 + Qdrant"]
+        SECRETS["Secret Store<br/>Vault / OS Keyring"]
+        LOGS["Langfuse / OTel<br/>Traces & Audit Logs"]
+    end
+
+    INTERNET --> WAF
+    WAF --> TUNNEL
+    TUNNEL --> WORKOS_V
+    WORKOS_V -->|"Authenticated Session"| H
+    CLOUD_MODELS <-.->|"Encrypted TLS"| LITELLM_SEC
+    EXTERNAL_APIs <-..->|"Via Tool Proxy Only"| TP
+    
+    H --> APPROVAL
+    APPROVAL --> POLICY
+    POLICY -->|"Policy Check"| TP
+    LG -->|"Trace Forward"| LOGS
+    MEM_SEC -->|"Memory Audit"| LOGS
+    TP -->|"Tool Audit"| LOGS
+    SECRETS -->|"Inject at Runtime"| H
+    SECRETS -->|"Inject at Runtime"| TP
+    
+    H --> LG
+    LG --> TP
+    TP --> TOOLS
+    LG --> LITELLM_SEC
+    LG --> MEM_SEC
+
+    style INTERNET fill:#f9f,stroke:#333,stroke-width:2px,color:#333
+    style DMZ fill:#ffe6cc,stroke:#d79b00,stroke-width:2px,color:#333
+    style SECURE fill:#d5e8d4,stroke:#82b366,stroke-width:2px,color:#333
+    style DATAVAULT fill:#dae8fc,stroke:#6c8ebf,stroke-width:2px,color:#333

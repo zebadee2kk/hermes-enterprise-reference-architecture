@@ -1,0 +1,71 @@
+flowchart TB
+    subgraph Users["👤 Users"]
+        OPERATOR["Operator /<br/>Client User"]
+    end
+
+    subgraph Interface["Agent Interface Layer"]
+        HERMES["Hermes Agent<br/>Control Surface"]
+        WORKOS["WorkOS Control Plane<br/>Identity, Access & Policy"]
+        APPROVAL["Approval Gate Engine"]
+        WORKOS <--> APPROVAL
+    end
+
+    subgraph Orchestration["Orchestration & Workflow"]
+        LANGGRAPH["LangGraph Supervisor<br/>Workflow Router"]
+        N8N["n8n Workflow Automation<br/>Scheduled & Event-Driven"]
+    end
+
+    subgraph Gateway["Model & Tool Gateways"]
+        LITELLM["LiteLLM Gateway<br/>Model Routing, Fallback,<br/>Budget Control"]
+        TOOLPROXY["Tool Proxy /<br/>Governed MCP Gateway"]
+    end
+
+    subgraph Models["Model Providers"]
+        LOCAL["Local Inference<br/>Ollama / llama.cpp"]
+        CLOUD["Cloud Models<br/>Anthropic / OpenAI / etc."]
+        LITELLM --> LOCAL
+        LITELLM --> CLOUD
+    end
+
+    subgraph Memory["Memory Layer"]
+        MEM0["Mem0 + Qdrant<br/>Durable Semantic Memory"]
+        SESSION["Session Search<br/>Keyword Retrieval"]
+        ARCHIVAL["Archival Summaries<br/>Letta / Long-Term"]
+        WORKING["Working / Native Memory<br/>Immediate Steering Facts"]
+    end
+
+    subgraph Tools["Approved Tools"]
+        GITHUB["GitHub"]
+        NETBOX["NetBox"]
+        TICKETING["Ticketing / Helpdesk"]
+        EMAIL["Email / Calendar"]
+        BROWSER["Web Browser"]
+        APIS["Internal / External APIs"]
+    end
+
+    subgraph Observability["Observability & Evaluation"]
+        LANGFUSE["Langfuse<br/>LLM Traces & Cost"]
+        OTEL["OpenTelemetry<br/>Distributed Tracing"]
+        PROMPTFOO["Promptfoo<br/>Regression & Safety Evals"]
+    end
+
+    OPERATOR --> HERMES
+    WORKOS --> HERMES
+    HERMES --> LANGGRAPH
+    LANGGRAPH --> LITELLM
+    LANGGRAPH --> TOOLPROXY
+    LANGGRAPH --> N8N
+    TOOLPROXY --> GITHUB
+    TOOLPROXY --> NETBOX
+    TOOLPROXY --> TICKETING
+    TOOLPROXY --> EMAIL
+    TOOLPROXY --> BROWSER
+    TOOLPROXY --> APIS
+    HERMES --> WORKING
+    LANGGRAPH --> MEM0
+    LANGGRAPH --> SESSION
+    LANGGRAPH --> ARCHIVAL
+    LANGGRAPH --> LANGFUSE
+    LITELLM --> LANGFUSE
+    LANGFUSE --> OTEL
+    LANGGRAPH --> PROMPTFOO

@@ -1,0 +1,64 @@
+flowchart TB
+    subgraph HyperV["🖥️ Hyper-V Deployment"]
+        direction TB
+        HV_HOST["Windows Host<br/>(Hyper-V Manager)"]
+        HV_VM["Hermes Appliance VM"]
+        HV_NET["Dedicated VLAN /<br/>Firewall Policy"]
+        HV_HOST --> HV_NET
+        HV_NET --> HV_VM
+    end
+
+    subgraph VMware["☁️ VMware / vSphere Deployment"]
+        direction TB
+        VM_HOST["vSphere / ESXi Host"]
+        VM_VM["Hermes Appliance VM"]
+        VM_NET["Dedicated VLAN /<br/>Firewall Policy"]
+        VM_HOST --> VM_NET
+        VM_NET --> VM_VM
+    end
+
+    subgraph Proxmox["🐧 Proxmox Deployment"]
+        direction TB
+        PX_HOST["Proxmox Host"]
+        PX_VM["Hermes Appliance VM"]
+        PX_NET["Dedicated VLAN /<br/>Firewall Policy"]
+        PX_HOST --> PX_NET
+        PX_NET --> PX_VM
+    end
+
+    subgraph BareMetal["⚙️ Bare-Metal Appliance"]
+        direction TB
+        BM_HOST["Dedicated Mini-PC / Server"]
+        BM_NET["Isolated Network Segment"]
+        BM_HOST --> BM_NET
+    end
+
+    subgraph CloudVPS["☁️ Cloud / VPS Deployment"]
+        direction TB
+        CV_HOST["Cloud Instance<br/>DigitalOcean / AWS / Azure"]
+        CV_TUNNEL["Cloudflare Tunnel / VPN"]
+        CV_HOST --> CV_TUNNEL
+    end
+
+    subgraph SoftwareStack["📦 Shared Software Stack (All Deployments)"]
+        direction LR
+        H["Hermes Agent"]
+        LG["LangGraph"]
+        N8N["n8n"]
+        LL["LiteLLM"]
+        M["Memory<br/>Mem0 + Qdrant"]
+        TP["Tool Proxy"]
+        O["Langfuse / OTel"]
+        H --> LG
+        H --> N8N
+        LG --> LL
+        LG --> TP
+        LG --> M
+        LG --> O
+    end
+
+    HyperV --> SoftwareStack
+    VMware --> SoftwareStack
+    Proxmox --> SoftwareStack
+    BareMetal --> SoftwareStack
+    CloudVPS --> SoftwareStack
