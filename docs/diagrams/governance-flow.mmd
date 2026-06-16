@@ -1,0 +1,40 @@
+stateDiagram-v2
+    [*] --> Idle: System Ready
+
+    Idle --> RequestReceived: User Submits Task
+    RequestReceived --> AuthCheck: Authenticate via WorkOS
+
+    AuthCheck --> PolicyEval: Session Valid
+    AuthCheck --> Rejected: Session Invalid
+    
+    PolicyEval --> ReadOnlyCheck: Evaluate Tool Policy
+    ReadOnlyCheck --> ModelCall: Read-Only Tool Requested
+    ReadOnlyCheck --> MutationCheck: Mutating Tool Requested
+    ReadOnlyCheck --> NoTool: No Tool Needed
+
+    ModelCall --> ReadOnlyExecute
+    ReadOnlyExecute --> LogTrace
+    
+    NoTool --> ModelCall
+
+    MutationCheck --> ApprovalRequested: Mutation Detected
+    ApprovalRequested --> ApprovalPending: Await Operator
+    ApprovalPending --> Approved: Operator Grants Approval
+    ApprovalPending --> Rejected: Operator Denies
+    
+    Approved --> MutatingExecute
+    MutatingExecute --> LogTrace
+    Rejected --> LogTrace
+
+    LogTrace --> MemoryOps: Context Available
+    MemoryOps --> MemoryClassify: Classify Content
+    MemoryClassify --> MemoryWrite: Durable Fact / Procedure / Failure Mode
+    MemoryClassify --> MemorySkip: Ephemeral / Secret / Chat
+    MemoryWrite --> ResponseReady
+    MemorySkip --> ResponseReady
+
+    LogTrace --> ResponseReady: Direct Response
+    ResponseReady --> Observable: Emit to Langfuse / OTel
+    Observable --> Idle: Return to Idle
+
+    Rejected --> Idle: Return to Idle

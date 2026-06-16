@@ -57,6 +57,13 @@ The architecture describes a managed agentic AI platform with:
 │   │   └── overview.md
 │   ├── client-appliance-profiles.md
 │   ├── deployment-patterns.md
+│   ├── diagrams/
+│   │   ├── index.md              ← visual architecture diagrams (start here)
+│   │   ├── system-architecture.mmd
+│   │   ├── deployment-topology.mmd
+│   │   ├── data-flow.mmd
+│   │   ├── security-boundaries.mmd
+│   │   └── governance-flow.mmd
 │   ├── memory-observability-evals.md
 │   ├── roadmap.md
 │   └── security-and-governance.md
@@ -69,12 +76,13 @@ The architecture describes a managed agentic AI platform with:
 ## Recommended reading order
 
 1. [Executive summary](docs/executive-summary.md) — one-page overview for directors and prospects
-2. [Architecture overview](docs/architecture/overview.md)
-3. [Security and governance model](docs/security-and-governance.md)
-4. [Memory, observability and evaluation](docs/memory-observability-evals.md)
-5. [Deployment patterns](docs/deployment-patterns.md)
-6. [Client appliance profiles](docs/client-appliance-profiles.md)
-7. [Roadmap](docs/roadmap.md)
+2. [Architecture diagrams](docs/diagrams/index.md) — visual overview of the platform (start here for a quick picture)
+3. [Architecture overview](docs/architecture/overview.md)
+4. [Security and governance model](docs/security-and-governance.md)
+5. [Memory, observability and evaluation](docs/memory-observability-evals.md)
+6. [Deployment patterns](docs/deployment-patterns.md)
+7. [Client appliance profiles](docs/client-appliance-profiles.md)
+8. [Roadmap](docs/roadmap.md)
 
 ## Non-goals
 

@@ -1,0 +1,83 @@
+sequenceDiagram
+    autonumber
+    participant U as 👤 User / Operator
+    participant W as WorkOS Control Plane
+    participant H as Hermes Agent Interface
+    participant LG as LangGraph Supervisor
+    participant TP as Tool Proxy / MCP
+    participant N8N as n8n Workflow Engine
+    participant LL as LiteLLM Gateway
+    participant MP as Model Provider
+    participant M as Memory Layer
+    participant L as Langfuse / OTel
+    participant T as External Tools
+
+    rect rgb(220, 240, 255)
+        Note over U,W: Authentication & Policy Check
+        U->>W: Authenticate / Request Session
+        W-->>U: Session Token + Policy Bundle
+    end
+
+    rect rgb(255, 245, 220)
+        Note over U,M: User Request Flow
+        U->>H: Submit Task / Chat Message
+        H->>LG: Forward with Run Context + Trace ID
+    end
+
+    rect rgb(255, 235, 235)
+        Note over LG,LL: Model Call (if needed)
+        LG->>LL: Route Model Request
+        LL->>MP: Call Model API
+        MP-->>LL: Model Response
+        LL-->>LG: Response + Usage Data
+        LL->>L: Emit Trace (tokens, cost, model)
+    end
+
+    rect rgb(235, 255, 235)
+        Note over LG,T: Tool Execution (if needed)
+        LG->>TP: Request Tool Call (with policy check)
+        TP->>TP: Validate Allow / Deny / Approval
+        alt Approved Read-Only Tool
+            TP->>T: Execute Read Operation
+            T-->>TP: Data Response
+            TP-->>LG: Result + Audit Log
+            TP->>L: Log Tool Call
+        else Approval-Gated Mutation
+            TP-->>H: Request Human Approval
+            H-->>U: Prompt Approval
+            U-->>H: Grant / Deny
+            H-->>TP: Approval Decision
+            alt Approved
+                TP->>T: Execute Mutation
+                T-->>TP: Confirmation
+                TP-->>LG: Result + Audit Log
+                TP->>L: Log Tool Call + Approval
+            else Denied
+                TP-->>LG: Tool Denied
+            end
+        end
+    end
+
+    rect rgb(245, 235, 255)
+        Note over LG,N8N: Workflow Trigger (if applicable)
+        LG->>N8N: Trigger Workflow
+        N8N->>T: Execute Workflow Steps
+        T-->>N8N: Results
+        N8N-->>LG: Workflow Complete
+        N8N->>L: Log Workflow Run
+    end
+
+    rect rgb(255, 255, 230)
+        Note over LG,M: Memory Interaction
+        LG->>M: Read Relevant Memory
+        M-->>LG: Contextual Facts
+        LG->>M: Write New Memory (classified)
+        M->>M: Deduplicate / Namespace
+        M->>L: Log Memory Write
+    end
+
+    rect rgb(220, 255, 220)
+        Note over H,U: Response
+        LG-->>H: Final Result + Trace Reference
+        H-->>U: Display Response + Approval Trails
+    end
